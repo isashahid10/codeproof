@@ -291,22 +291,27 @@ ${this.getActionBarScript(studentName, assignmentName, snapshots.length, session
 </body>
 </html>`;
 
-		return this.embedVerificationId(baseHtml);
+		return this.embedVerificationId(baseHtml, snapshots.length);
 	}
 
 	/**
-	 * Computes a SHA-256 hash of the report HTML and embeds a verification ID
-	 * and corresponding meta tags into the document. The verification website
-	 * can later strip these markers and re-hash to verify integrity.
+	 * Computes a SHA-256 hash of the report HTML and embeds a verification ID,
+	 * corresponding meta tags, and a visible verification block into the document.
+	 * The verification website can later strip these markers and re-hash to verify integrity.
+	 *
+	 * The hash is computed from the base HTML BEFORE inserting any verification data,
+	 * avoiding a circular dependency.
 	 *
 	 * @param baseHtml - The complete HTML report without verification markers
-	 * @returns The HTML with verification ID and meta tags embedded
+	 * @param snapshotCount - Number of snapshots in the report for the verification block
+	 * @returns The HTML with verification ID, meta tags, and visible verification block embedded
 	 */
-	private embedVerificationId(baseHtml: string): string {
+	private embedVerificationId(baseHtml: string, snapshotCount: number): string {
 		const hash = crypto.createHash('sha256').update(baseHtml, 'utf8').digest('hex');
 		const now = new Date();
 		const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
 		const verificationId = `CP-${dateStr}-${hash.substring(0, 12)}`;
+		const generatedStr = this.formatTimestamp(now);
 
 		const metaTags = [
 			'\n<!-- CODEPROOF-VERIFICATION-META-START -->',
@@ -321,6 +326,23 @@ ${this.getActionBarScript(studentName, assignmentName, snapshots.length, session
 			'    <!-- CODEPROOF-VERIFICATION-BADGE-END -->'
 		].join('\n');
 
+		/* Visible verification block — uses monospace font and a visible border
+		   so it survives PDF conversion intact and pdf.js can extract the text. */
+		const verificationBlock = `
+<!-- CODEPROOF-VERIFICATION-BLOCK-START -->
+<section class="card verification-block">
+  <pre class="verification-pre">┌─────────────────────────────────────────────────────────────────────┐
+│ VERIFICATION                                                        │
+│ ID: ${verificationId.padEnd(64)}│
+│ Hash: ${hash}  │
+│ Chain Length: ${String(snapshotCount).padEnd(55)}│
+│ Generated: ${generatedStr.padEnd(57)}│
+│ Verify at: codeproof.netlify.app#verify${' '.repeat(30)}│
+└─────────────────────────────────────────────────────────────────────┘</pre>
+</section>
+<!-- CODEPROOF-VERIFICATION-BLOCK-END -->
+`;
+
 		let finalHtml = baseHtml.replace(
 			'<meta name="viewport" content="width=device-width, initial-scale=1.0">',
 			'<meta name="viewport" content="width=device-width, initial-scale=1.0">' + metaTags
@@ -329,6 +351,12 @@ ${this.getActionBarScript(studentName, assignmentName, snapshots.length, session
 		finalHtml = finalHtml.replace(
 			'<div class="header-subtitle">Development Authenticity Report</div>',
 			'<div class="header-subtitle">Development Authenticity Report</div>' + badge
+		);
+
+		/* Insert the visible verification block above the footer */
+		finalHtml = finalHtml.replace(
+			'</main>\n\n<footer>',
+			'</main>\n' + verificationBlock + '\n<footer>'
 		);
 
 		return finalHtml;
@@ -1479,6 +1507,25 @@ td {
   color: var(--text-secondary);
   line-height: 1.5;
   font-style: italic;
+}
+
+/* ── VERIFICATION BLOCK ────────────────────── */
+.verification-block {
+  border: 2px solid var(--primary);
+  background: var(--bg);
+  padding: 0;
+  overflow: hidden;
+}
+
+.verification-pre {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--primary);
+  margin: 0;
+  padding: 1.5rem 2rem;
+  white-space: pre;
+  overflow-x: auto;
 }
 
 /* ── FOOTER ─────────────────────────────────── */

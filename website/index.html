@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify a CodeProof Report</title>
+<title>CodeProof — Prove You Wrote It</title>
 <link rel="icon" type="image/png" href="icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary: #1a1a2e;
+  --primary-light: #16213e;
   --accent: #4361ee;
+  --accent-light: #5a7bff;
   --success: #2ec4b6;
   --danger: #e71d36;
   --bg: #f8f9fa;
@@ -18,90 +20,324 @@
   --text-secondary: #636e72;
   --border: #e9ecef;
   --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
   --radius: 12px;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--text);
   background: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
-/* ── HEADER ─────────────────────────────────── */
-header {
+/* ── FADE-IN ANIMATIONS ─────────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── HERO SECTION ────────────────────────────── */
+.hero {
   background: var(--primary);
-  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #1a1a2e 100%);
   color: #fff;
-  padding: 3rem 2rem 2.5rem;
+  padding: 6rem 2rem 5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-header::before {
+.hero::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(circle at 20% 50%, rgba(67, 97, 238, 0.08) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 50%, rgba(46, 196, 182, 0.06) 0%, transparent 50%);
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(67, 97, 238, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(46, 196, 182, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(67, 97, 238, 0.06) 0%, transparent 40%);
   pointer-events: none;
 }
 
-.header-content {
+.hero-content {
   position: relative;
   z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.header-logo {
-  width: 72px;
-  height: 72px;
-  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));
+.hero-logo {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 4px 12px rgba(255,255,255,0.25));
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
   margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, #fff 0%, #c4d0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.header-brand {
-  font-size: 0.8rem;
+.hero-subtitle {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  opacity: 0.75;
+  max-width: 560px;
+  margin: 0 auto 2.5rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.95rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  opacity: 0.5;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(67, 97, 238, 0.35);
+}
+
+.btn-primary:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(67, 97, 238, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+/* ── SECTION STYLING ─────────────────────────── */
+section {
+  padding: 5rem 2rem;
+}
+
+.section-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
   margin-bottom: 0.75rem;
 }
 
-h1 {
-  font-size: 1.75rem;
+.section-header p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ── HOW IT WORKS ────────────────────────────── */
+.how-it-works {
+  background: #fff;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.step {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.2rem;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  margin-bottom: 1.25rem;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.step h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.step p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* ── WHY CODEPROOF ───────────────────────────── */
+.why-codeproof {
+  background: var(--bg);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.feature-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 2rem;
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--primary);
   margin-bottom: 0.5rem;
 }
 
-.subtitle {
-  font-size: 0.95rem;
-  opacity: 0.65;
-  max-width: 420px;
-  margin: 0 auto;
+.feature-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
-/* ── MAIN ───────────────────────────────────── */
-main {
-  flex: 1;
+/* ── VERIFY SECTION ──────────────────────────── */
+.verify-section {
+  background: #fff;
+}
+
+.verify-box {
   max-width: 700px;
-  width: 100%;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
 }
 
-/* ── UPLOAD AREA ────────────────────────────── */
+/* Tabs */
+.verify-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+}
+
+.verify-tab {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.verify-tab:hover {
+  color: var(--accent);
+  background: rgba(67, 97, 238, 0.03);
+}
+
+.verify-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.verify-tab-content {
+  display: none;
+  padding: 2rem;
+}
+
+.verify-tab-content.active {
+  display: block;
+}
+
+/* Upload area */
 .upload-area {
   border: 2px dashed var(--border);
   border-radius: var(--radius);
@@ -109,15 +345,13 @@ main {
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: var(--bg-card);
-  box-shadow: var(--shadow);
+  background: var(--bg);
 }
 
 .upload-area:hover,
 .upload-area.drag-over {
   border-color: var(--accent);
-  background: rgba(67, 97, 238, 0.03);
-  box-shadow: var(--shadow-lg);
+  background: rgba(67, 97, 238, 0.04);
 }
 
 .upload-icon {
@@ -127,7 +361,7 @@ main {
 }
 
 .upload-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 0.35rem;
@@ -147,10 +381,57 @@ main {
   display: none;
 }
 
-/* ── RESULT CARDS ───────────────────────────── */
+/* Verification ID input */
+.verify-id-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.verify-id-input {
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.verify-id-input:focus {
+  border-color: var(--accent);
+}
+
+.verify-id-input::placeholder {
+  color: #b2bec3;
+  font-family: var(--mono);
+}
+
+.btn-verify {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-verify:hover {
+  background: var(--accent-light);
+}
+
+/* Result cards */
 .result {
   display: none;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   animation: fadeIn 0.35s ease;
 }
 
@@ -163,16 +444,23 @@ main {
   background: var(--bg-card);
   border-radius: var(--radius);
   padding: 2rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow);
   border-left: 4px solid transparent;
 }
 
 .result-card.verified {
   border-left-color: var(--success);
+  background: linear-gradient(135deg, #f0faf9 0%, #fff 50%);
 }
 
 .result-card.failed {
   border-left-color: var(--danger);
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 50%);
+}
+
+.result-card.info {
+  border-left-color: var(--accent);
+  background: linear-gradient(135deg, #f0f3ff 0%, #fff 50%);
 }
 
 .result-header {
@@ -184,8 +472,8 @@ main {
 
 .result-icon {
   font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -203,13 +491,19 @@ main {
   color: var(--danger);
 }
 
+.info .result-icon {
+  background: rgba(67, 97, 238, 0.12);
+  color: var(--accent);
+}
+
 .result-title {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
 .verified .result-title { color: #1a8a7e; }
 .failed .result-title { color: var(--danger); }
+.info .result-title { color: var(--accent); }
 
 .result-body p {
   font-size: 0.9rem;
@@ -266,93 +560,281 @@ main {
   text-decoration: underline;
 }
 
-/* ── FOOTER ─────────────────────────────────── */
-footer {
+/* Loading spinner */
+.loading {
+  display: none;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading.active { display: block; }
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+.site-footer {
   background: var(--primary);
   color: rgba(255, 255, 255, 0.5);
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  font-size: 0.8rem;
 }
 
-footer strong {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.footer-tagline {
-  font-size: 0.85rem;
+.site-footer .footer-brand {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 0.5rem;
-  color: rgba(255, 255, 255, 0.65);
 }
 
-footer a {
-  color: var(--accent);
+.site-footer p {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.site-footer a {
+  color: var(--accent-light);
   text-decoration: none;
 }
 
-footer a:hover {
+.site-footer a:hover {
   text-decoration: underline;
 }
 
 .footer-privacy {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   font-size: 0.75rem;
   opacity: 0.6;
 }
 
-/* ── RESPONSIVE ─────────────────────────────── */
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 900px) {
+  .steps { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 2.4rem; }
+}
+
 @media (max-width: 600px) {
-  header { padding: 2rem 1.25rem; }
-  h1 { font-size: 1.35rem; }
+  .hero { padding: 4rem 1.25rem 3.5rem; }
+  .hero h1 { font-size: 2rem; }
+  .hero-subtitle { font-size: 1rem; }
+  section { padding: 3.5rem 1.25rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .verify-tab-content { padding: 1.5rem; }
   .upload-area { padding: 2rem 1.25rem; }
   .result-details { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 1.6rem; }
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-content">
-    <img src="icon.png" alt="CodeProof" class="header-logo">
-    <div class="header-brand">CodeProof</div>
-    <h1>Verify a CodeProof Report</h1>
-    <p class="subtitle">Upload a report to verify its authenticity and hash chain integrity</p>
+<!-- ═══ HERO ═══════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <img src="icon.png" alt="CodeProof" class="hero-logo">
+    <h1>Prove You Wrote It.</h1>
+    <p class="hero-subtitle">CodeProof is a VS Code extension that continuously records your development process and generates tamper-evident reports to prove code authorship.</p>
+    <div class="hero-buttons">
+      <a href="https://marketplace.visualstudio.com/items?itemName=codeproof.codeproof" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Install Extension
+      </a>
+      <a href="#verify" class="btn btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/></svg>
+        Verify a Report
+      </a>
+    </div>
   </div>
-</header>
+</section>
 
-<main>
-
-  <div class="upload-area" id="uploadArea">
-    <div class="upload-icon">&#128196;</div>
-    <div class="upload-title">Drop your CodeProof report here</div>
-    <div class="upload-hint">or <strong>click to browse</strong> for an HTML file</div>
-    <input type="file" accept=".html,.htm" class="upload-input" id="fileInput">
+<!-- ═══ HOW IT WORKS ═══════════════════════════ -->
+<section class="how-it-works">
+  <div class="section-container">
+    <div class="section-header fade-in">
+      <h2>How It Works</h2>
+      <p>Three steps from coding to proof of authorship</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-number">1</div>
+        <span class="step-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="#4361ee" stroke-width="2" opacity="0.2"/><circle cx="24" cy="24" r="6" fill="#e71d36"/><circle cx="24" cy="24" r="10" stroke="#e71d36" stroke-width="2" fill="none" opacity="0.4"/></svg>
+        </span>
+        <h3>Record</h3>
+        <p>CodeProof runs silently in VS Code, capturing timestamped snapshots of every change you make. Typing, pasting, deleting &mdash; all logged.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">2</div>
+        <span class="step-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="#4361ee" stroke-width="2" opacity="0.2"/><path d="M14 22l6 4-6 4" stroke="#2ec4b6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="24" y1="30" x2="34" y2="30" stroke="#2ec4b6" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </span>
+        <h3>Analyse</h3>
+        <p>AI reviews your development timeline, detects potential flags, and generates a narrative describing how your code was built progressively.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">3</div>
+        <span class="step-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="10" y="6" width="28" height="36" rx="3" stroke="#4361ee" stroke-width="2" opacity="0.2"/><path d="M18 20l4 4 8-8" stroke="#2ec4b6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="32" x2="32" y2="32" stroke="#4361ee" stroke-width="1.5" opacity="0.3"/><line x1="16" y1="36" x2="28" y2="36" stroke="#4361ee" stroke-width="1.5" opacity="0.3"/></svg>
+        </span>
+        <h3>Submit</h3>
+        <p>Export a professional report with hash chain verification. Your professor can verify authenticity on this page.</p>
+      </div>
+    </div>
   </div>
+</section>
 
-  <div class="result" id="result">
-    <!-- Populated by JavaScript -->
+<!-- ═══ WHY CODEPROOF ═════════════════════════= -->
+<section class="why-codeproof">
+  <div class="section-container">
+    <div class="section-header fade-in">
+      <h2>Why CodeProof</h2>
+      <p>Built for students, by students</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <span class="feature-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 4l2.5 2.5L16 9" stroke="#4361ee" stroke-width="2" stroke-linecap="round"/><rect x="4" y="8" width="24" height="20" rx="3" stroke="#4361ee" stroke-width="2"/><path d="M10 16h12M10 20h8" stroke="#4361ee" stroke-width="1.5" opacity="0.4"/></svg>
+        </span>
+        <h3>Tamper-Evident</h3>
+        <p>Every snapshot is cryptographically chained. Insert, delete, or modify a snapshot and the chain breaks.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#2ec4b6" stroke-width="2"/><path d="M12 16l3 3 5-6" stroke="#2ec4b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <h3>AI-Powered Narratives</h3>
+        <p>AI analyses your timeline and writes a development story that proves progressive, authentic work.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="8" y="14" width="16" height="12" rx="2" stroke="#4361ee" stroke-width="2"/><path d="M12 14V10a4 4 0 018 0v4" stroke="#4361ee" stroke-width="2"/><circle cx="16" cy="20" r="1.5" fill="#4361ee"/></svg>
+        </span>
+        <h3>Privacy First</h3>
+        <p>All data stays on your machine. Nothing is uploaded unless you choose to export.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 6l3 6h6l-5 4 2 6-6-4-6 4 2-6-5-4h6z" stroke="#ff9f1c" stroke-width="2" fill="none"/></svg>
+        </span>
+        <h3>Smart Flags</h3>
+        <p>Get warnings about things that might look suspicious before you submit. Add context to explain paste events or code patterns.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#2ec4b6" stroke-width="2"/><path d="M12 16h8M16 12v8" stroke="#2ec4b6" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <h3>Free &amp; Open Source</h3>
+        <p>CodeProof is free. AI reports use Gemini's free tier. No subscriptions.</p>
+      </div>
+    </div>
   </div>
+</section>
 
-</main>
+<!-- ═══ VERIFY SECTION ═════════════════════════ -->
+<section class="verify-section" id="verify">
+  <div class="section-container">
+    <div class="section-header fade-in">
+      <h2>Verify a Report</h2>
+      <p>Upload a CodeProof report or enter a verification ID to check its authenticity</p>
+    </div>
+    <div class="verify-box fade-in">
+      <div class="verify-tabs">
+        <button class="verify-tab active" data-tab="upload">Upload Report</button>
+        <button class="verify-tab" data-tab="verify-id">Enter Verification ID</button>
+      </div>
 
-<footer>
-  <p class="footer-tagline"><strong>CodeProof</strong> &mdash; Prove you wrote it.</p>
+      <!-- Tab 1: Upload -->
+      <div class="verify-tab-content active" id="tab-upload">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">&#128196;</div>
+          <div class="upload-title">Drop your CodeProof report here</div>
+          <div class="upload-hint">or <strong>click to browse</strong> &mdash; accepts .html and .pdf files</div>
+          <input type="file" accept=".html,.htm,.pdf" class="upload-input" id="fileInput">
+        </div>
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">Analysing report...</div>
+        </div>
+        <div class="result" id="uploadResult"></div>
+      </div>
+
+      <!-- Tab 2: Verification ID -->
+      <div class="verify-tab-content" id="tab-verify-id">
+        <div class="verify-id-form">
+          <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Verification ID</label>
+          <input type="text" class="verify-id-input" id="verifyIdInput" placeholder="CP-20260210-a3f7b2c1d4e5" spellcheck="false" autocomplete="off">
+          <button class="btn-verify" id="verifyIdBtn">Check Verification ID</button>
+        </div>
+        <div class="result" id="idResult"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═════════════════════════════════ -->
+<footer class="site-footer">
+  <p class="footer-brand">CodeProof &mdash; Development Authenticity for Students</p>
   <p><a href="https://github.com/codeproof" target="_blank" rel="noopener">GitHub</a></p>
+  <p>Made with care at Monash University</p>
   <p class="footer-privacy">All verification happens in your browser. No data is uploaded anywhere.</p>
 </footer>
 
+<!-- ═══ SCRIPTS ════════════════════════════════ -->
 <script>
 (function () {
   'use strict';
 
+  /* ── Intersection Observer for fade-in animations ── */
+  var observerOptions = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-in').forEach(function (el) {
+    observer.observe(el);
+  });
+
+  /* ── Tab switching ─────────────────────────── */
+  var tabs = document.querySelectorAll('.verify-tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelectorAll('.verify-tab-content').forEach(function (c) { c.classList.remove('active'); });
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── Upload handling ───────────────────────── */
   var uploadArea = document.getElementById('uploadArea');
   var fileInput = document.getElementById('fileInput');
-  var resultDiv = document.getElementById('result');
+  var uploadResult = document.getElementById('uploadResult');
+  var loadingEl = document.getElementById('loading');
 
-  /* ── Drag-and-drop handling ──────────────── */
-  uploadArea.addEventListener('click', function () {
-    fileInput.click();
-  });
+  uploadArea.addEventListener('click', function () { fileInput.click(); });
 
   uploadArea.addEventListener('dragover', function (event) {
     event.preventDefault();
@@ -366,9 +848,8 @@ footer a:hover {
   uploadArea.addEventListener('drop', function (event) {
     event.preventDefault();
     uploadArea.classList.remove('drag-over');
-    var files = event.dataTransfer.files;
-    if (files.length > 0) {
-      handleFile(files[0]);
+    if (event.dataTransfer.files.length > 0) {
+      handleFile(event.dataTransfer.files[0]);
     }
   });
 
@@ -378,32 +859,96 @@ footer a:hover {
     }
   });
 
-  /* ── File processing ─────────────────────── */
-
   /**
-   * Reads the uploaded file and triggers verification.
-   * @param {File} file - The HTML report file
+   * Routes the uploaded file to the appropriate verification handler.
+   * @param {File} file - The uploaded file
    */
   function handleFile(file) {
-    if (!file.name.match(/\.html?$/i)) {
-      showFailed('Please upload an HTML file (.html or .htm).');
-      return;
+    if (file.name.match(/\.pdf$/i)) {
+      handlePDF(file);
+    } else if (file.name.match(/\.html?$/i)) {
+      handleHTML(file);
+    } else {
+      showFailed(uploadResult, 'Please upload an HTML or PDF file.');
     }
+  }
 
+  /**
+   * Handles HTML report verification.
+   * @param {File} file - HTML report file
+   */
+  function handleHTML(file) {
     var reader = new FileReader();
     reader.onload = function (event) {
-      verifyReport(event.target.result);
+      verifyHTMLReport(event.target.result);
     };
     reader.readAsText(file);
   }
 
   /**
-   * Verifies a CodeProof report by recomputing its content hash and
-   * comparing against the embedded verification ID.
-   * @param {string} htmlContent - The full HTML string of the report
+   * Handles PDF report verification using pdf.js.
+   * @param {File} file - PDF report file
    */
-  async function verifyReport(htmlContent) {
-    /* Extract the embedded meta tags */
+  function handlePDF(file) {
+    loadingEl.classList.add('active');
+    uploadArea.style.display = 'none';
+    uploadResult.style.display = 'none';
+
+    var script = document.createElement('script');
+    script.type = 'module';
+    script.textContent = '(async function() {' +
+      'try {' +
+      '  const pdfjsLib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs");' +
+      '  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs";' +
+      '  const arrayBuffer = await new Response(window._pdfFile).arrayBuffer();' +
+      '  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;' +
+      '  let fullText = "";' +
+      '  for (let i = 1; i <= pdf.numPages; i++) {' +
+      '    const page = await pdf.getPage(i);' +
+      '    const content = await page.getTextContent();' +
+      '    fullText += content.items.map(function(item) { return item.str; }).join(" ") + "\\n";' +
+      '  }' +
+      '  window._pdfTextResult = fullText;' +
+      '  window.dispatchEvent(new Event("pdfTextReady"));' +
+      '} catch(err) {' +
+      '  window._pdfError = err.message || "Failed to parse PDF";' +
+      '  window.dispatchEvent(new Event("pdfTextReady"));' +
+      '}' +
+      '})();';
+
+    /* Store the file as a blob for the module script to access */
+    window._pdfFile = file;
+
+    window.addEventListener('pdfTextReady', function onReady() {
+      window.removeEventListener('pdfTextReady', onReady);
+      loadingEl.classList.remove('active');
+      uploadArea.style.display = '';
+
+      if (window._pdfError) {
+        showFailed(uploadResult, 'Failed to parse PDF: ' + window._pdfError);
+        delete window._pdfError;
+        return;
+      }
+
+      var text = window._pdfTextResult || '';
+      delete window._pdfTextResult;
+      delete window._pdfFile;
+      verifyPDFText(text);
+    }, { once: true });
+
+    document.body.appendChild(script);
+  }
+
+  /**
+   * Verifies an HTML report by recomputing its content hash.
+   * @param {string} htmlContent - The full HTML string
+   */
+  async function verifyHTMLReport(htmlContent) {
+    /* Try to extract from visible verification block first */
+    var blockIdMatch = htmlContent.match(/VERIFICATION[\s\S]*?ID:\s*(CP-\d{8}-[a-f0-9]{12})/);
+    var blockHashMatch = htmlContent.match(/VERIFICATION[\s\S]*?Hash:\s*([a-f0-9]{64})/);
+
+    /* Fall back to meta tags */
     var verificationMatch = htmlContent.match(
       /<meta\s+name="codeproof-verification"\s+content="([^"]+)"\s*>/
     );
@@ -411,13 +956,13 @@ footer a:hover {
       /<meta\s+name="codeproof-hash"\s+content="([^"]+)"\s*>/
     );
 
-    if (!verificationMatch || !hashMatch) {
-      showFailed('This does not appear to be a valid CodeProof report. No verification data found.');
+    var embeddedId = (verificationMatch && verificationMatch[1]) || (blockIdMatch && blockIdMatch[1]);
+    var embeddedHash = (hashMatch && hashMatch[1]) || (blockHashMatch && blockHashMatch[1]);
+
+    if (!embeddedId || !embeddedHash) {
+      showFailed(uploadResult, 'This does not appear to be a valid CodeProof report. No verification data found.');
       return;
     }
-
-    var embeddedId = verificationMatch[1];
-    var embeddedHash = hashMatch[1];
 
     /* Strip verification markers to recover the original base HTML */
     var stripped = htmlContent;
@@ -434,6 +979,12 @@ footer a:hover {
       ''
     );
 
+    /* Remove visible verification block */
+    stripped = stripped.replace(
+      /\n<!-- CODEPROOF-VERIFICATION-BLOCK-START -->[\s\S]*?<!-- CODEPROOF-VERIFICATION-BLOCK-END -->\n/,
+      ''
+    );
+
     /* Compute SHA-256 of the stripped content */
     var encoder = new TextEncoder();
     var data = encoder.encode(stripped);
@@ -444,44 +995,91 @@ footer a:hover {
     }).join('');
 
     if (recomputedHash === embeddedHash) {
-      showVerified(htmlContent, embeddedId, recomputedHash);
+      showVerified(uploadResult, htmlContent, embeddedId, recomputedHash);
     } else {
-      showFailed('This report has been altered after generation or is not a valid CodeProof report.');
+      showFailed(uploadResult, 'Hash mismatch — this report has been altered after generation or is not a valid CodeProof report.');
     }
   }
 
   /**
-   * Displays the "Report Verified" card with extracted metadata.
-   * @param {string} html - The report HTML (for extracting metadata)
+   * Verifies a PDF report by searching for the verification block in extracted text.
+   * @param {string} text - Extracted PDF text
+   */
+  function verifyPDFText(text) {
+    /* Look for the verification block values in the extracted text */
+    var idMatch = text.match(/ID:\s*(CP-\d{8}-[a-f0-9]{12})/);
+    var hashMatch = text.match(/Hash:\s*([a-f0-9]{64})/);
+    var chainMatch = text.match(/Chain\s*Length:\s*(\d+)\s*snapshots?/);
+    var generatedMatch = text.match(/Generated:\s*([^\n]+?)(?:\s*Verify|\s*$)/);
+
+    if (!idMatch) {
+      showFailed(uploadResult, 'No verification block found in this PDF. It may not be a CodeProof report.');
+      return;
+    }
+
+    var verificationId = idMatch[1];
+    var hash = hashMatch ? hashMatch[1] : 'Not found';
+    var chainLength = chainMatch ? chainMatch[1] : 'N/A';
+    var generated = generatedMatch ? generatedMatch[1].trim() : 'Unknown';
+
+    /* For PDF, we can't recompute the hash (since PDF conversion changes the content).
+       Instead, we show the extracted verification data and note this limitation. */
+    var resultHtml =
+      '<div class="result-card info">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">&#9432;</div>' +
+          '<div class="result-title">Verification Data Found</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p>Verification data was extracted from the PDF. PDF reports cannot be fully hash-verified (the PDF conversion process changes the binary content). For full cryptographic verification, use the original HTML report.</p>' +
+          '<div class="result-details">' +
+            detail('Verification ID', verificationId) +
+            detail('Chain Length', chainLength + ' snapshots') +
+            detail('Generated', generated) +
+            '<div class="detail-item" style="grid-column: 1 / -1;">' +
+              '<div class="detail-label">Report Hash</div>' +
+              '<div class="detail-value mono">' + escapeHTML(hash) + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="try-again" onclick="resetUpload()">&#8592; Verify another report</button>' +
+      '</div>';
+
+    uploadResult.innerHTML = resultHtml;
+    uploadResult.style.display = 'block';
+    uploadResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /**
+   * Displays the verified card with extracted metadata.
+   * @param {HTMLElement} container - Result container
+   * @param {string} html - The report HTML
    * @param {string} verificationId - The embedded verification ID
    * @param {string} hash - The recomputed hash
    */
-  function showVerified(html, verificationId, hash) {
+  function showVerified(container, html, verificationId, hash) {
     var parser = new DOMParser();
     var doc = parser.parseFromString(html, 'text/html');
 
-    /* Extract metadata from the report */
     var studentName = extractMeta(doc, 'Student') || 'Unknown';
     var assignmentName = extractMeta(doc, 'Assignment') || 'Unknown';
     var dateRange = extractMeta(doc, 'Date Range') || 'Unknown';
     var generated = extractMeta(doc, 'Generated') || 'Unknown';
 
-    /* Snapshot count from integrity section */
     var snapshotMatch = html.match(/(\d+)\s*snapshots?,\s*chain intact/);
     var snapshotCount = snapshotMatch ? snapshotMatch[1] : 'N/A';
 
-    /* Chain length from integrity details */
     var chainMatch = html.match(/Chain length:<\/span>\s*<code>(\d+)\s*snapshots?<\/code>/);
     var chainLength = chainMatch ? chainMatch[1] : snapshotCount;
 
-    resultDiv.innerHTML =
+    container.innerHTML =
       '<div class="result-card verified">' +
         '<div class="result-header">' +
           '<div class="result-icon">&#10003;</div>' +
           '<div class="result-title">Report Verified</div>' +
         '</div>' +
         '<div class="result-body">' +
-          '<p>This report has not been modified since generation.</p>' +
+          '<p>This report has not been modified since generation. The hash chain is intact.</p>' +
           '<div class="result-details">' +
             detail('Student', escapeHTML(studentName)) +
             detail('Assignment', escapeHTML(assignmentName)) +
@@ -498,16 +1096,17 @@ footer a:hover {
         '<button class="try-again" onclick="resetUpload()">&#8592; Verify another report</button>' +
       '</div>';
 
-    resultDiv.style.display = 'block';
-    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   /**
-   * Displays the "Verification Failed" card.
+   * Displays a failure card.
+   * @param {HTMLElement} container - Result container
    * @param {string} message - Failure reason
    */
-  function showFailed(message) {
-    resultDiv.innerHTML =
+  function showFailed(container, message) {
+    container.innerHTML =
       '<div class="result-card failed">' +
         '<div class="result-header">' +
           '<div class="result-icon">&#10007;</div>' +
@@ -519,14 +1118,83 @@ footer a:hover {
         '<button class="try-again" onclick="resetUpload()">&#8592; Try another file</button>' +
       '</div>';
 
-    resultDiv.style.display = 'block';
-    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  /* ── Verification ID checking ──────────────── */
+  var verifyIdBtn = document.getElementById('verifyIdBtn');
+  var verifyIdInput = document.getElementById('verifyIdInput');
+  var idResult = document.getElementById('idResult');
+
+  verifyIdBtn.addEventListener('click', function () {
+    checkVerificationId(verifyIdInput.value.trim());
+  });
+
+  verifyIdInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      checkVerificationId(verifyIdInput.value.trim());
+    }
+  });
+
   /**
-   * Extracts a metadata value from the report header by label text.
-   * @param {Document} doc - The parsed report document
-   * @param {string} label - The label to search for (e.g. "Student")
+   * Validates a verification ID format and extracts the date.
+   * @param {string} idStr - The verification ID string
+   */
+  function checkVerificationId(idStr) {
+    if (!idStr) {
+      showFailed(idResult, 'Please enter a verification ID.');
+      return;
+    }
+
+    var match = idStr.match(/^CP-(\d{4})(\d{2})(\d{2})-([a-f0-9]{12})$/);
+    if (!match) {
+      showFailed(idResult, 'Invalid format. Expected: CP-XXXXXXXX-XXXXXXXXXXXX (e.g., CP-20260210-a3f7b2c1d4e5)');
+      return;
+    }
+
+    var year = match[1];
+    var month = match[2];
+    var day = match[3];
+    var hashPrefix = match[4];
+
+    var dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    var formattedDate = dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    idResult.innerHTML =
+      '<div class="result-card info">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">&#9432;</div>' +
+          '<div class="result-title">Valid ID Format</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p>This verification ID has a valid format. For full cryptographic verification, upload the original report file.</p>' +
+          '<div class="result-details">' +
+            detail('Verification ID', escapeHTML(idStr)) +
+            detail('Report Date', formattedDate) +
+            detail('Hash Prefix', hashPrefix) +
+            '<div class="detail-item">' +
+              '<div class="detail-label">Status</div>' +
+              '<div class="detail-value">Format valid &mdash; upload report for full check</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    idResult.style.display = 'block';
+    idResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ── Helpers ───────────────────────────────── */
+
+  /**
+   * Extracts metadata from a parsed report document.
+   * @param {Document} doc
+   * @param {string} label
    * @returns {string|null}
    */
   function extractMeta(doc, label) {
@@ -554,7 +1222,7 @@ footer a:hover {
   }
 
   /**
-   * Escapes HTML special characters for safe rendering.
+   * Escapes HTML special characters.
    * @param {string} text
    * @returns {string}
    */
@@ -565,13 +1233,15 @@ footer a:hover {
   }
 
   /**
-   * Resets the upload area so the user can verify another report.
+   * Resets the upload UI.
    */
   window.resetUpload = function () {
-    resultDiv.style.display = 'none';
-    resultDiv.innerHTML = '';
+    uploadResult.style.display = 'none';
+    uploadResult.innerHTML = '';
+    uploadArea.style.display = '';
     fileInput.value = '';
   };
+
 })();
 </script>
 

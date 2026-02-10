@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify a CodeProof Report</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a1a2e;
+  --accent: #4361ee;
+  --success: #2ec4b6;
+  --danger: #e71d36;
+  --bg: #f8f9fa;
+  --bg-card: #ffffff;
+  --text: #2d3436;
+  --text-secondary: #636e72;
+  --border: #e9ecef;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+  --radius: 12px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ─────────────────────────────────── */
+header {
+  background: var(--primary);
+  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  color: #fff;
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(67, 97, 238, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 50%, rgba(46, 196, 182, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.header-logo {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));
+  margin-bottom: 1.25rem;
+}
+
+.header-brand {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  opacity: 0.5;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  opacity: 0.65;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* ── MAIN ───────────────────────────────────── */
+main {
+  flex: 1;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+/* ── UPLOAD AREA ────────────────────────────── */
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.upload-area:hover,
+.upload-area.drag-over {
+  border-color: var(--accent);
+  background: rgba(67, 97, 238, 0.03);
+  box-shadow: var(--shadow-lg);
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.4;
+}
+
+.upload-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.upload-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.upload-hint strong {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.upload-input {
+  display: none;
+}
+
+/* ── RESULT CARDS ───────────────────────────── */
+.result {
+  display: none;
+  margin-top: 2rem;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid transparent;
+}
+
+.result-card.verified {
+  border-left-color: var(--success);
+}
+
+.result-card.failed {
+  border-left-color: var(--danger);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.result-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.verified .result-icon {
+  background: rgba(46, 196, 182, 0.12);
+  color: var(--success);
+}
+
+.failed .result-icon {
+  background: rgba(231, 29, 54, 0.12);
+  color: var(--danger);
+}
+
+.result-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.verified .result-title { color: #1a8a7e; }
+.failed .result-title { color: var(--danger); }
+
+.result-body p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.result-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  margin-bottom: 0.15rem;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.detail-value.mono {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.try-again {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 500;
+  border: none;
+  background: none;
+  font-family: var(--font);
+}
+
+.try-again:hover {
+  text-decoration: underline;
+}
+
+/* ── FOOTER ─────────────────────────────────── */
+footer {
+  background: var(--primary);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+footer strong {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-tagline {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-privacy {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 600px) {
+  header { padding: 2rem 1.25rem; }
+  h1 { font-size: 1.35rem; }
+  .upload-area { padding: 2rem 1.25rem; }
+  .result-details { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <img src="icon.png" alt="CodeProof" class="header-logo">
+    <div class="header-brand">CodeProof</div>
+    <h1>Verify a CodeProof Report</h1>
+    <p class="subtitle">Upload a report to verify its authenticity and hash chain integrity</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="upload-area" id="uploadArea">
+    <div class="upload-icon">&#128196;</div>
+    <div class="upload-title">Drop your CodeProof report here</div>
+    <div class="upload-hint">or <strong>click to browse</strong> for an HTML file</div>
+    <input type="file" accept=".html,.htm" class="upload-input" id="fileInput">
+  </div>
+
+  <div class="result" id="result">
+    <!-- Populated by JavaScript -->
+  </div>
+
+</main>
+
+<footer>
+  <p class="footer-tagline"><strong>CodeProof</strong> &mdash; Prove you wrote it.</p>
+  <p><a href="https://github.com/codeproof" target="_blank" rel="noopener">GitHub</a></p>
+  <p class="footer-privacy">All verification happens in your browser. No data is uploaded anywhere.</p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var uploadArea = document.getElementById('uploadArea');
+  var fileInput = document.getElementById('fileInput');
+  var resultDiv = document.getElementById('result');
+
+  /* ── Drag-and-drop handling ──────────────── */
+  uploadArea.addEventListener('click', function () {
+    fileInput.click();
+  });
+
+  uploadArea.addEventListener('dragover', function (event) {
+    event.preventDefault();
+    uploadArea.classList.add('drag-over');
+  });
+
+  uploadArea.addEventListener('dragleave', function () {
+    uploadArea.classList.remove('drag-over');
+  });
+
+  uploadArea.addEventListener('drop', function (event) {
+    event.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    var files = event.dataTransfer.files;
+    if (files.length > 0) {
+      handleFile(files[0]);
+    }
+  });
+
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      handleFile(fileInput.files[0]);
+    }
+  });
+
+  /* ── File processing ─────────────────────── */
+
+  /**
+   * Reads the uploaded file and triggers verification.
+   * @param {File} file - The HTML report file
+   */
+  function handleFile(file) {
+    if (!file.name.match(/\.html?$/i)) {
+      showFailed('Please upload an HTML file (.html or .htm).');
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      verifyReport(event.target.result);
+    };
+    reader.readAsText(file);
+  }
+
+  /**
+   * Verifies a CodeProof report by recomputing its content hash and
+   * comparing against the embedded verification ID.
+   * @param {string} htmlContent - The full HTML string of the report
+   */
+  async function verifyReport(htmlContent) {
+    /* Extract the embedded meta tags */
+    var verificationMatch = htmlContent.match(
+      /<meta\s+name="codeproof-verification"\s+content="([^"]+)"\s*>/
+    );
+    var hashMatch = htmlContent.match(
+      /<meta\s+name="codeproof-hash"\s+content="([^"]+)"\s*>/
+    );
+
+    if (!verificationMatch || !hashMatch) {
+      showFailed('This does not appear to be a valid CodeProof report. No verification data found.');
+      return;
+    }
+
+    var embeddedId = verificationMatch[1];
+    var embeddedHash = hashMatch[1];
+
+    /* Strip verification markers to recover the original base HTML */
+    var stripped = htmlContent;
+
+    /* Remove verification meta block */
+    stripped = stripped.replace(
+      /\n<!-- CODEPROOF-VERIFICATION-META-START -->\n<meta name="codeproof-verification" content="[^"]*">\n<meta name="codeproof-hash" content="[^"]*">\n<!-- CODEPROOF-VERIFICATION-META-END -->/,
+      ''
+    );
+
+    /* Remove verification badge block */
+    stripped = stripped.replace(
+      /\n    <!-- CODEPROOF-VERIFICATION-BADGE-START -->\n    <div class="verification-id">[^<]*<\/div>\n    <!-- CODEPROOF-VERIFICATION-BADGE-END -->/,
+      ''
+    );
+
+    /* Compute SHA-256 of the stripped content */
+    var encoder = new TextEncoder();
+    var data = encoder.encode(stripped);
+    var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    var hashArray = Array.from(new Uint8Array(hashBuffer));
+    var recomputedHash = hashArray.map(function (b) {
+      return b.toString(16).padStart(2, '0');
+    }).join('');
+
+    if (recomputedHash === embeddedHash) {
+      showVerified(htmlContent, embeddedId, recomputedHash);
+    } else {
+      showFailed('This report has been altered after generation or is not a valid CodeProof report.');
+    }
+  }
+
+  /**
+   * Displays the "Report Verified" card with extracted metadata.
+   * @param {string} html - The report HTML (for extracting metadata)
+   * @param {string} verificationId - The embedded verification ID
+   * @param {string} hash - The recomputed hash
+   */
+  function showVerified(html, verificationId, hash) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+
+    /* Extract metadata from the report */
+    var studentName = extractMeta(doc, 'Student') || 'Unknown';
+    var assignmentName = extractMeta(doc, 'Assignment') || 'Unknown';
+    var dateRange = extractMeta(doc, 'Date Range') || 'Unknown';
+    var generated = extractMeta(doc, 'Generated') || 'Unknown';
+
+    /* Snapshot count from integrity section */
+    var snapshotMatch = html.match(/(\d+)\s*snapshots?,\s*chain intact/);
+    var snapshotCount = snapshotMatch ? snapshotMatch[1] : 'N/A';
+
+    /* Chain length from integrity details */
+    var chainMatch = html.match(/Chain length:<\/span>\s*<code>(\d+)\s*snapshots?<\/code>/);
+    var chainLength = chainMatch ? chainMatch[1] : snapshotCount;
+
+    resultDiv.innerHTML =
+      '<div class="result-card verified">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">&#10003;</div>' +
+          '<div class="result-title">Report Verified</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p>This report has not been modified since generation.</p>' +
+          '<div class="result-details">' +
+            detail('Student', escapeHTML(studentName)) +
+            detail('Assignment', escapeHTML(assignmentName)) +
+            detail('Date Range', escapeHTML(dateRange)) +
+            detail('Generated', escapeHTML(generated)) +
+            detail('Snapshots', snapshotCount) +
+            detail('Hash Chain', chainLength + ' links') +
+            '<div class="detail-item" style="grid-column: 1 / -1;">' +
+              '<div class="detail-label">Verification ID</div>' +
+              '<div class="detail-value mono">' + escapeHTML(verificationId) + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="try-again" onclick="resetUpload()">&#8592; Verify another report</button>' +
+      '</div>';
+
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /**
+   * Displays the "Verification Failed" card.
+   * @param {string} message - Failure reason
+   */
+  function showFailed(message) {
+    resultDiv.innerHTML =
+      '<div class="result-card failed">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">&#10007;</div>' +
+          '<div class="result-title">Verification Failed</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p>' + escapeHTML(message) + '</p>' +
+        '</div>' +
+        '<button class="try-again" onclick="resetUpload()">&#8592; Try another file</button>' +
+      '</div>';
+
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /**
+   * Extracts a metadata value from the report header by label text.
+   * @param {Document} doc - The parsed report document
+   * @param {string} label - The label to search for (e.g. "Student")
+   * @returns {string|null}
+   */
+  function extractMeta(doc, label) {
+    var labels = doc.querySelectorAll('.meta-label');
+    for (var idx = 0; idx < labels.length; idx++) {
+      if (labels[idx].textContent.trim() === label) {
+        var valueEl = labels[idx].parentElement.querySelector('.meta-value');
+        if (valueEl) { return valueEl.textContent.trim(); }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Creates a detail item HTML string.
+   * @param {string} label
+   * @param {string} value
+   * @returns {string}
+   */
+  function detail(label, value) {
+    return '<div class="detail-item">' +
+      '<div class="detail-label">' + label + '</div>' +
+      '<div class="detail-value">' + value + '</div>' +
+    '</div>';
+  }
+
+  /**
+   * Escapes HTML special characters for safe rendering.
+   * @param {string} text
+   * @returns {string}
+   */
+  function escapeHTML(text) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+  }
+
+  /**
+   * Resets the upload area so the user can verify another report.
+   */
+  window.resetUpload = function () {
+    resultDiv.style.display = 'none';
+    resultDiv.innerHTML = '';
+    fileInput.value = '';
+  };
+})();
+</script>
+
+</body>
+</html>

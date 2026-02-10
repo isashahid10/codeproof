@@ -1,0 +1,151 @@
+{
+  "name": "codeproof",
+  "displayName": "codeproof",
+  "description": "Prove you wrote your code — continuous development recording with tamper-evident reports",
+  "icon": "icon.png",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeproof",
+          "title": "CodeProof",
+          "icon": "icon.png"
+        }
+      ]
+    },
+    "views": {
+      "codeproof": [
+        {
+          "type": "webview",
+          "id": "codeproof.sidebar",
+          "name": "CodeProof"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeproof.startRecording",
+        "title": "CodeProof: Start Recording"
+      },
+      {
+        "command": "codeproof.stopRecording",
+        "title": "CodeProof: Stop Recording"
+      },
+      {
+        "command": "codeproof.pauseRecording",
+        "title": "CodeProof: Pause Recording"
+      },
+      {
+        "command": "codeproof.getStats",
+        "title": "CodeProof: View Stats"
+      },
+      {
+        "command": "codeproof.openDashboard",
+        "title": "CodeProof: Open Dashboard"
+      },
+      {
+        "command": "codeproof.exportReport",
+        "title": "CodeProof: Export Report"
+      },
+      {
+        "command": "codeproof.reviewFlags",
+        "title": "CodeProof: Review Flags"
+      }
+    ],
+    "configuration": {
+      "title": "CodeProof",
+      "properties": {
+        "codeproof.snapshotInterval": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 300,
+          "description": "Seconds between snapshots"
+        },
+        "codeproof.pasteThreshold": {
+          "type": "number",
+          "default": 50,
+          "minimum": 10,
+          "maximum": 500,
+          "description": "Characters to classify as paste"
+        },
+        "codeproof.excludePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**"
+          ],
+          "description": "Glob patterns for files to ignore"
+        },
+        "codeproof.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start recording when opening a workspace"
+        },
+        "codeproof.storageLocation": {
+          "type": "string",
+          "default": ".codeproof",
+          "description": "Directory name for CodeProof data (relative to workspace root)"
+        },
+        "codeproof.aiProvider": {
+          "type": "string",
+          "enum": [
+            "gemini",
+            "none"
+          ],
+          "default": "gemini",
+          "description": "AI provider for generating development narratives and analysis"
+        },
+        "codeproof.aiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for AI provider. Get a free Gemini key at aistudio.google.com/apikey"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/diff": "^7.0.2",
+    "@types/minimatch": "^5.1.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.96.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "better-sqlite3": "^12.6.2",
+    "diff": "^8.0.3",
+    "minimatch": "^10.1.2",
+    "puppeteer-core": "^24.37.2"
+  }
+}

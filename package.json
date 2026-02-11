@@ -61,6 +61,10 @@
       {
         "command": "codeproof.reviewFlags",
         "title": "CodeProof: Review Flags"
+      },
+      {
+        "command": "codeproof.openReplay",
+        "title": "CodeProof: Open Development Replay"
       }
     ],
     "configuration": {
@@ -101,6 +105,11 @@
           "type": "string",
           "default": ".codeproof",
           "description": "Directory name for CodeProof data (relative to workspace root)"
+        },
+        "codeproof.enableReplay": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable high-frequency replay recording for development playback"
         },
         "codeproof.aiProvider": {
           "type": "string",

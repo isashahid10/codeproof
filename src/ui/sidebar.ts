@@ -34,6 +34,7 @@ export interface SidebarMessage {
 		| 'pause'
 		| 'stop'
 		| 'openDashboard'
+		| 'openReplay'
 		| 'reviewFlags'
 		| 'exportReport'
 		| 'openInBrowser'
@@ -199,6 +200,9 @@ ${this.getStyles()}
 		<h3 class="section-title">Actions</h3>
 		<button class="btn btn-action" onclick="send('openDashboard')">
 			<span class="btn-icon">&#128202;</span> Open Dashboard
+		</button>
+		<button class="btn btn-action btn-replay" onclick="send('openReplay')">
+			<span class="btn-icon">&#9654;</span> Replay
 		</button>
 		<button class="btn btn-action" onclick="send('reviewFlags')">
 			<span class="btn-icon">&#128681;</span> Review Flags
@@ -444,6 +448,17 @@ body {
 
 .btn-action:last-child {
 	margin-bottom: 0;
+}
+
+.btn-replay {
+	background: rgba(86, 156, 214, 0.15);
+	border-color: rgba(86, 156, 214, 0.4);
+	color: #569cd6;
+}
+
+.btn-replay:hover:not(:disabled) {
+	background: rgba(86, 156, 214, 0.25);
+	opacity: 1;
 }
 
 /* ── SESSION DETAILS ──────────────────────────── */

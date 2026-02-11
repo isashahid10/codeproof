@@ -81,6 +81,28 @@ export interface Flag {
 	suggestedContext: string;
 }
 
+/** A single change within a replay event */
+export interface ReplayChange {
+	/** Start position of the change range */
+	rangeStart: { line: number; character: number };
+	/** End position of the change range */
+	rangeEnd: { line: number; character: number };
+	/** Inserted text (empty string for pure deletion) */
+	text: string;
+	/** Number of characters deleted */
+	rangeLength: number;
+}
+
+/** A high-frequency edit event for development replay */
+export interface ReplayEvent {
+	/** Timestamp in milliseconds (Date.now()) */
+	timestamp: number;
+	/** Workspace-relative filename */
+	filename: string;
+	/** Array of changes applied in this event */
+	changes: ReplayChange[];
+}
+
 /** A flag with student-provided context and review status */
 export interface FlagWithContext extends Flag {
 	/** Student's written explanation for this flag */

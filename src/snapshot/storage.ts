@@ -3,7 +3,17 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import Database from 'better-sqlite3';
-import { Snapshot, Session, FlagWithContext } from './types.js';
+import { Snapshot, Session, FlagWithContext, ReplayEvent } from './types.js';
+
+/** Options for filtering replay events */
+export interface ReplayQueryOptions {
+	/** Filter by filename (workspace-relative path) */
+	filename?: string;
+	/** Return events after this timestamp (milliseconds) */
+	after?: number;
+	/** Return events before this timestamp (milliseconds) */
+	before?: number;
+}
 
 /** Options for filtering snapshots */
 export interface SnapshotQueryOptions {
@@ -35,6 +45,7 @@ export class SnapshotStorage implements vscode.Disposable {
 	private readonly updateSessionStatsStmt: Database.Statement;
 	private readonly getSnapshotCountStmt: Database.Statement;
 	private readonly getCurrentSessionStmt: Database.Statement;
+	private readonly insertReplayEventStmt: Database.Statement;
 
 	/**
 	 * Creates a new SnapshotStorage instance.
@@ -95,6 +106,11 @@ export class SnapshotStorage implements vscode.Disposable {
 			"SELECT * FROM sessions WHERE ended_at = '' ORDER BY started_at DESC LIMIT 1"
 		);
 
+		this.insertReplayEventStmt = this.database.prepare(`
+			INSERT INTO replay_events (timestamp, filename, changes)
+			VALUES (@timestamp, @filename, @changes)
+		`);
+
 		console.log(`[CodeProof] Storage opened at ${this.dbPath}`);
 	}
 
@@ -130,6 +146,16 @@ export class SnapshotStorage implements vscode.Disposable {
 				files_touched TEXT NOT NULL,
 				total_snapshots INTEGER NOT NULL
 			);
+
+			CREATE TABLE IF NOT EXISTS replay_events (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				timestamp INTEGER NOT NULL,
+				filename TEXT NOT NULL,
+				changes TEXT NOT NULL
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_replay_timestamp ON replay_events(timestamp);
+			CREATE INDEX IF NOT EXISTS idx_replay_filename ON replay_events(filename);
 
 			CREATE TABLE IF NOT EXISTS flags (
 				id TEXT PRIMARY KEY,
@@ -432,6 +458,82 @@ export class SnapshotStorage implements vscode.Disposable {
 			studentContext: row.student_context as string,
 			status: row.status as FlagWithContext['status'],
 		}));
+	}
+
+	/**
+	 * Saves a batch of replay events to the database in a single transaction.
+	 *
+	 * @param events - Array of ReplayEvent objects to persist
+	 */
+	saveReplayEvents(events: ReplayEvent[]): void {
+		const insertMany = this.database.transaction((items: ReplayEvent[]) => {
+			for (const event of items) {
+				this.insertReplayEventStmt.run({
+					timestamp: event.timestamp,
+					filename: event.filename,
+					changes: JSON.stringify(event.changes),
+				});
+			}
+		});
+		insertMany(events);
+	}
+
+	/**
+	 * Retrieves replay events from the database with optional filters.
+	 *
+	 * @param options - Optional filters for filename, after, and before timestamps
+	 * @returns An array of ReplayEvent objects matching the filters
+	 */
+	getReplayEvents(options?: ReplayQueryOptions): ReplayEvent[] {
+		const conditions: string[] = [];
+		const params: Record<string, string | number> = {};
+
+		if (options?.filename) {
+			conditions.push('filename = @filename');
+			params.filename = options.filename;
+		}
+		if (options?.after !== undefined) {
+			conditions.push('timestamp > @after');
+			params.after = options.after;
+		}
+		if (options?.before !== undefined) {
+			conditions.push('timestamp < @before');
+			params.before = options.before;
+		}
+
+		const whereClause = conditions.length > 0
+			? `WHERE ${conditions.join(' AND ')}`
+			: '';
+
+		const stmt = this.database.prepare(
+			`SELECT * FROM replay_events ${whereClause} ORDER BY timestamp ASC`
+		);
+
+		const rows = stmt.all(params) as Array<{
+			id: number;
+			timestamp: number;
+			filename: string;
+			changes: string;
+		}>;
+
+		return rows.map((row) => ({
+			timestamp: row.timestamp,
+			filename: row.filename,
+			changes: JSON.parse(row.changes),
+		}));
+	}
+
+	/**
+	 * Returns a list of distinct filenames that have replay data.
+	 *
+	 * @returns Array of workspace-relative filenames
+	 */
+	getReplayFileList(): string[] {
+		const rows = this.database.prepare(
+			'SELECT DISTINCT filename FROM replay_events ORDER BY filename ASC'
+		).all() as Array<{ filename: string }>;
+
+		return rows.map((row) => row.filename);
 	}
 
 	/**

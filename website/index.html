@@ -1122,19 +1122,73 @@ section {
 </section>
 
 <!-- ═══ FEEDBACK ═══════════════════════════════ -->
-<section class="feedback-section">
+<section class="feedback-section" id="feedback">
   <div class="section-container">
     <div class="section-header fade-in">
       <h2>Help Improve CodeProof</h2>
       <p>Found a bug? Have an idea? Let us know.</p>
     </div>
-    <div class="feedback-buttons fade-in">
-      <a href="mailto:tcs545016@gmail.com?subject=%5BCodeProof%5D%20Feature%20Request&body=Feature%20description%3A%0A%0AWhy%20it%20would%20be%20useful%3A%0A%0AAny%20other%20details%3A%0A" class="btn-feedback btn-feature">
-        <span class="btn-feedback-icon">&#x1F4A1;</span> Request a Feature
-      </a>
-      <a href="mailto:tcs545016@gmail.com?subject=%5BCodeProof%5D%20Bug%20Report&body=What%20happened%3A%0A%0ASteps%20to%20reproduce%3A%0A1.%20%0A2.%20%0A3.%20%0A%0AExpected%20behavior%3A%0A%0AVS%20Code%20version%3A%0A%0AOperating%20system%3A%0A" class="btn-feedback btn-bug">
-        <span class="btn-feedback-icon">&#x1F41B;</span> Report a Bug
-      </a>
+    <div class="feedback-box fade-in">
+      <div class="feedback-tabs">
+        <button class="feedback-tab active" data-feedback-tab="feature-request">&#x1F4A1; Request a Feature</button>
+        <button class="feedback-tab" data-feedback-tab="bug-report">&#x1F41B; Report a Bug</button>
+      </div>
+
+      <!-- Tab 1: Feature Request -->
+      <div class="feedback-tab-content active" id="tab-feature-request">
+        <form action="https://formspree.io/f/xgoloylw" method="POST">
+          <input type="text" name="_gotcha" style="display:none">
+          <input type="hidden" name="_next" value="https://codeproof.netlify.app/thanks.html">
+          <div class="form-group">
+            <label for="feature-email">Your email (so we can follow up)</label>
+            <input type="email" id="feature-email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label for="feature-title">Feature title</label>
+            <input type="text" id="feature-title" name="title" required placeholder="Brief title for your feature request">
+          </div>
+          <div class="form-group">
+            <label for="feature-description">Describe the feature and why it would be useful</label>
+            <textarea id="feature-description" name="description" required placeholder="Tell us about the feature you'd like to see..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit btn-submit-feature">Submit Feature Request</button>
+        </form>
+      </div>
+
+      <!-- Tab 2: Bug Report -->
+      <div class="feedback-tab-content" id="tab-bug-report">
+        <form action="https://formspree.io/f/xpqjqrjz" method="POST">
+          <input type="text" name="_gotcha" style="display:none">
+          <input type="hidden" name="_next" value="https://codeproof.netlify.app/thanks.html">
+          <div class="form-group">
+            <label for="bug-email">Your email</label>
+            <input type="email" id="bug-email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label for="bug-title">Bug title</label>
+            <input type="text" id="bug-title" name="title" required placeholder="Brief description of the bug">
+          </div>
+          <div class="form-group">
+            <label for="bug-what-happened">What happened?</label>
+            <textarea id="bug-what-happened" name="what-happened" required placeholder="Describe what went wrong..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="bug-steps">Steps to reproduce</label>
+            <textarea id="bug-steps" name="steps-to-reproduce" required placeholder="1. Open VS Code&#10;2. ...&#10;3. ..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bug-vscode-version">VS Code version</label>
+              <input type="text" id="bug-vscode-version" name="vscode-version" placeholder="e.g. 1.96.0">
+            </div>
+            <div class="form-group">
+              <label for="bug-os">Operating system</label>
+              <input type="text" id="bug-os" name="operating-system" placeholder="e.g. macOS 15.2">
+            </div>
+          </div>
+          <button type="submit" class="btn-submit btn-submit-bug">Submit Bug Report</button>
+        </form>
+      </div>
     </div>
     <p class="feedback-github fade-in">Or <a href="https://github.com/isashahid10/codeproof/issues" target="_blank" rel="noopener">open an issue on GitHub</a></p>
   </div>

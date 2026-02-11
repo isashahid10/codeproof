@@ -150,6 +150,95 @@ body {
   transform: translateY(-2px);
 }
 
+.hero-vsix-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  opacity: 0.55;
+}
+
+.hero-vsix-note a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hero-vsix-note a:hover {
+  opacity: 1;
+}
+
+/* ── FEEDBACK SECTION ──────────────────────────── */
+.feedback-section {
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.btn-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.btn-feedback:hover {
+  transform: translateY(-2px);
+}
+
+.btn-feature {
+  background: var(--accent);
+  box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
+}
+
+.btn-feature:hover {
+  background: var(--accent-light);
+  box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4);
+}
+
+.btn-bug {
+  background: var(--danger);
+  box-shadow: 0 4px 16px rgba(231, 29, 54, 0.3);
+}
+
+.btn-bug:hover {
+  background: #ff2e48;
+  box-shadow: 0 6px 24px rgba(231, 29, 54, 0.4);
+}
+
+.btn-feedback-icon {
+  font-size: 1.1rem;
+}
+
+.feedback-github {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.feedback-github a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.feedback-github a:hover {
+  text-decoration: underline;
+}
+
 /* ── SECTION STYLING ─────────────────────────── */
 section {
   padding: 5rem 2rem;
@@ -856,15 +945,16 @@ section {
     <h1>Prove You Wrote It.</h1>
     <p class="hero-subtitle">CodeProof is a VS Code extension that continuously records your development process and generates tamper-evident reports to prove code authorship.</p>
     <div class="hero-buttons">
-      <a href="https://marketplace.visualstudio.com/items?itemName=codeproof.codeproof" class="btn btn-primary">
+      <a href="https://open-vsx.org/extension/isashahid/codeproof" class="btn btn-primary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        Install Extension
+        Install from Open VSX
       </a>
       <a href="#verify" class="btn btn-secondary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/></svg>
         Verify a Report
       </a>
     </div>
+    <p class="hero-vsix-note">Also available as a <a href="https://github.com/isashahid10/codeproof/releases">.vsix file on GitHub</a></p>
   </div>
 </section>
 
@@ -1028,6 +1118,25 @@ section {
         <div class="result" id="idResult"></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══ FEEDBACK ═══════════════════════════════ -->
+<section class="feedback-section">
+  <div class="section-container">
+    <div class="section-header fade-in">
+      <h2>Help Improve CodeProof</h2>
+      <p>Found a bug? Have an idea? Let us know.</p>
+    </div>
+    <div class="feedback-buttons fade-in">
+      <a href="mailto:tcs545016@gmail.com?subject=%5BCodeProof%5D%20Feature%20Request&body=Feature%20description%3A%0A%0AWhy%20it%20would%20be%20useful%3A%0A%0AAny%20other%20details%3A%0A" class="btn-feedback btn-feature">
+        <span class="btn-feedback-icon">&#x1F4A1;</span> Request a Feature
+      </a>
+      <a href="mailto:tcs545016@gmail.com?subject=%5BCodeProof%5D%20Bug%20Report&body=What%20happened%3A%0A%0ASteps%20to%20reproduce%3A%0A1.%20%0A2.%20%0A3.%20%0A%0AExpected%20behavior%3A%0A%0AVS%20Code%20version%3A%0A%0AOperating%20system%3A%0A" class="btn-feedback btn-bug">
+        <span class="btn-feedback-icon">&#x1F41B;</span> Report a Bug
+      </a>
+    </div>
+    <p class="feedback-github fade-in">Or <a href="https://github.com/isashahid10/codeproof/issues" target="_blank" rel="noopener">open an issue on GitHub</a></p>
   </div>
 </section>
 

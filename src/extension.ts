@@ -11,10 +11,15 @@ import { AIProvider, GeminiProvider, NoAIProvider } from './reports/ai-provider.
 import { FlagAnalyzer } from './flags/analyzer.js';
 import { FlagReviewPanel, FlagReviewMessage } from './ui/flag-review.js';
 import { CodeProofSidebarProvider, SidebarStatusUpdate } from './ui/sidebar.js';
+import { ReplayPlayerPanel } from './ui/replay-player.js';
+import { ReplayRecorder } from './snapshot/replay-recorder.js';
 import { findChromePath, generatePDF } from './reports/pdf.js';
 
 /** The snapshot engine instance */
 let engine: SnapshotEngine | undefined;
+
+/** The replay recorder instance */
+let replayRecorder: ReplayRecorder | undefined;
 
 /** The snapshot storage instance */
 let storage: SnapshotStorage | undefined;
@@ -266,6 +271,14 @@ function startRecording(context: vscode.ExtensionContext, silent: boolean = fals
 	engine = new SnapshotEngine(storage, configManager);
 	context.subscriptions.push(engine);
 
+	// Start replay recorder if enabled
+	const replayEnabled = vscode.workspace.getConfiguration('codeproof').get<boolean>('enableReplay', true);
+	if (replayEnabled) {
+		replayRecorder = new ReplayRecorder(storage, configManager.excludePatterns);
+		context.subscriptions.push(replayRecorder);
+		replayRecorder.start();
+	}
+
 	// Update status bar and sidebar on each snapshot
 	snapshotCount = 0;
 	pasteEventCount = 0;
@@ -304,6 +317,11 @@ function stopRecording(): void {
 	}
 
 	engine.stop();
+
+	if (replayRecorder) {
+		replayRecorder.stop();
+	}
+
 	updateStatusBarStopped(statusBarItem);
 	stopSidebarDurationTimer();
 	sessionStartTime = undefined;
@@ -923,6 +941,9 @@ export function activate(context: vscode.ExtensionContext): void {
 				case 'openDashboard':
 					await vscode.commands.executeCommand('codeproof.openDashboard');
 					break;
+				case 'openReplay':
+					await vscode.commands.executeCommand('codeproof.openReplay');
+					break;
 				case 'reviewFlags':
 					await vscode.commands.executeCommand('codeproof.reviewFlags');
 					break;
@@ -1024,7 +1045,28 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	);
 
-	context.subscriptions.push(startCommand, stopCommand, pauseCommand, statsCommand, dashboardCommand, exportCommand, reviewFlagsCommand);
+	const openReplayCommand = vscode.commands.registerCommand(
+		'codeproof.openReplay',
+		async () => {
+			try {
+				if (!storage) {
+					vscode.window.showInformationMessage(
+						'CodeProof: No recording data available. Start recording first.'
+					);
+					return;
+				}
+				const replayPlayer = new ReplayPlayerPanel(storage);
+				await replayPlayer.show();
+			} catch (error) {
+				console.error('[CodeProof] Error opening replay:', error);
+				vscode.window.showErrorMessage(
+					`CodeProof: Failed to open replay — ${error instanceof Error ? error.message : String(error)}`
+				);
+			}
+		}
+	);
+
+	context.subscriptions.push(startCommand, stopCommand, pauseCommand, statsCommand, dashboardCommand, exportCommand, reviewFlagsCommand, openReplayCommand);
 
 	// Auto-start recording if the setting is enabled and a workspace is open
 	if (configManager.autoStart && getWorkspaceFolderPath()) {
@@ -1040,6 +1082,10 @@ export function activate(context: vscode.ExtensionContext): void {
  */
 export function deactivate(): void {
 	stopSidebarDurationTimer();
+	if (replayRecorder) {
+		replayRecorder.dispose();
+		replayRecorder = undefined;
+	}
 	if (engine) {
 		engine.dispose();
 		engine = undefined;

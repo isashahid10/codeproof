@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeProof — Prove You Wrote It</title>
+<title>CodeProof - Prove You Wrote It</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -279,6 +279,209 @@ section {
   font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+/* ── REPLAY FEATURE ─────────────────────────── */
+.replay-feature {
+  background: var(--primary);
+  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.replay-feature::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(circle at 70% 30%, rgba(46, 196, 182, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 30% 70%, rgba(67, 97, 238, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.replay-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.replay-text h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #fff 0%, #c4d0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.replay-text p {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.75;
+  margin-bottom: 1.5rem;
+}
+
+.replay-highlights {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.replay-highlights li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+  opacity: 0.85;
+}
+
+.replay-highlights li .highlight-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(46, 196, 182, 0.15);
+  color: var(--success);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.replay-preview-window {
+  background: #0d1117;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.preview-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #161b22;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.preview-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.preview-dot.red { background: #ff5f57; }
+.preview-dot.yellow { background: #febc2e; }
+.preview-dot.green { background: #28c840; }
+
+.preview-titlebar span {
+  margin-left: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.preview-body {
+  padding: 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: #e6edf3;
+}
+
+.preview-line {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.preview-ln {
+  color: rgba(255, 255, 255, 0.2);
+  user-select: none;
+  min-width: 20px;
+  text-align: right;
+}
+
+.preview-code .kw { color: #ff7b72; }
+.preview-code .fn { color: #d2a8ff; }
+.preview-code .str { color: #a5d6ff; }
+.preview-code .cm { color: #8b949e; }
+.preview-code .num { color: #79c0ff; }
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--success);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.replay-controls-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: #161b22;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ctrl-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.ctrl-progress {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ctrl-progress-fill {
+  width: 35%;
+  height: 100%;
+  background: var(--success);
+  border-radius: 2px;
+}
+
+.ctrl-time {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 900px) {
+  .replay-content { grid-template-columns: 1fr; gap: 2.5rem; }
+  .replay-preview-window { max-width: 500px; margin: 0 auto; }
+}
+
+@media (max-width: 600px) {
+  .replay-text h2 { font-size: 1.6rem; }
 }
 
 /* ── VERIFY SECTION ──────────────────────────── */
@@ -679,7 +882,7 @@ section {
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" stroke="#4361ee" stroke-width="2" opacity="0.2"/><circle cx="24" cy="24" r="6" fill="#e71d36"/><circle cx="24" cy="24" r="10" stroke="#e71d36" stroke-width="2" fill="none" opacity="0.4"/></svg>
         </span>
         <h3>Record</h3>
-        <p>CodeProof runs silently in VS Code, capturing timestamped snapshots of every change you make. Typing, pasting, deleting &mdash; all logged.</p>
+        <p>CodeProof runs silently in VS Code, capturing timestamped snapshots of every change you make. Typing, pasting, deleting - all logged.</p>
       </div>
       <div class="step fade-in">
         <div class="step-number">2</div>
@@ -748,6 +951,45 @@ section {
   </div>
 </section>
 
+<!-- ═══ DEVELOPMENT REPLAY ═════════════════════ -->
+<section class="replay-feature">
+  <div class="replay-content">
+    <div class="replay-text fade-in">
+      <h2>Watch Your Code Come to Life</h2>
+      <p>The built-in Development Replay lets you play back your entire coding session keystroke by keystroke, right inside VS Code. See exactly how your code was written, from first line to final commit.</p>
+      <ul class="replay-highlights">
+        <li><span class="highlight-icon">&#10003;</span> Character-by-character playback of every edit</li>
+        <li><span class="highlight-icon">&#10003;</span> Adjustable speed controls (0.5x to 10x)</li>
+        <li><span class="highlight-icon">&#10003;</span> Timeline scrubbing to jump to any point</li>
+        <li><span class="highlight-icon">&#10003;</span> File-by-file navigation across your project</li>
+        <li><span class="highlight-icon">&#10003;</span> Runs entirely inside VS Code - no browser needed</li>
+      </ul>
+    </div>
+    <div class="replay-preview-window fade-in">
+      <div class="preview-titlebar">
+        <div class="preview-dot red"></div>
+        <div class="preview-dot yellow"></div>
+        <div class="preview-dot green"></div>
+        <span>Development Replay - main.py</span>
+      </div>
+      <div class="preview-body">
+        <div class="preview-line"><span class="preview-ln">1</span><span class="preview-code"><span class="kw">def</span> <span class="fn">calculate_grade</span>(scores):</span></div>
+        <div class="preview-line"><span class="preview-ln">2</span><span class="preview-code">    <span class="cm"># Filter out invalid scores</span></span></div>
+        <div class="preview-line"><span class="preview-ln">3</span><span class="preview-code">    valid = [s <span class="kw">for</span> s <span class="kw">in</span> scores <span class="kw">if</span> <span class="num">0</span> &lt;= s &lt;= <span class="num">100</span>]</span></div>
+        <div class="preview-line"><span class="preview-ln">4</span><span class="preview-code">    <span class="kw">if not</span> valid:</span></div>
+        <div class="preview-line"><span class="preview-ln">5</span><span class="preview-code">        <span class="kw">return</span> <span class="str">"No valid scores"</span></span></div>
+        <div class="preview-line"><span class="preview-ln">6</span><span class="preview-code">    avg = <span class="fn">sum</span>(valid) / <span class="fn">len</span>(vali<span class="typing-cursor"></span></span></div>
+        <div class="preview-line"><span class="preview-ln">7</span><span class="preview-code"></span></div>
+      </div>
+      <div class="replay-controls-preview">
+        <div class="ctrl-btn">&#9654;</div>
+        <div class="ctrl-progress"><div class="ctrl-progress-fill"></div></div>
+        <span class="ctrl-time">2:14 / 6:30</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ VERIFY SECTION ═════════════════════════ -->
 <section class="verify-section" id="verify">
   <div class="section-container">
@@ -766,7 +1008,7 @@ section {
         <div class="upload-area" id="uploadArea">
           <div class="upload-icon">&#128196;</div>
           <div class="upload-title">Drop your CodeProof report here</div>
-          <div class="upload-hint">or <strong>click to browse</strong> &mdash; accepts .html and .pdf files</div>
+          <div class="upload-hint">or <strong>click to browse</strong> - accepts .html and .pdf files</div>
           <input type="file" accept=".html,.htm,.pdf" class="upload-input" id="fileInput">
         </div>
         <div class="loading" id="loading">
@@ -791,7 +1033,7 @@ section {
 
 <!-- ═══ FOOTER ═════════════════════════════════ -->
 <footer class="site-footer">
-  <p class="footer-brand">CodeProof &mdash; Development Authenticity for Students</p>
+  <p class="footer-brand">CodeProof - Development Authenticity for Students</p>
   <p><a href="https://github.com/codeproof" target="_blank" rel="noopener">GitHub</a></p>
   <p>Made with care at Monash University</p>
   <p class="footer-privacy">All verification happens in your browser. No data is uploaded anywhere.</p>
@@ -944,6 +1186,10 @@ section {
    * @param {string} htmlContent - The full HTML string
    */
   async function verifyHTMLReport(htmlContent) {
+    /* Detect whether this is a replay or a report */
+    var typeMatch = htmlContent.match(/<meta\s+name="codeproof-type"\s+content="([^"]+)"\s*>/);
+    var isReplay = typeMatch && typeMatch[1] === 'replay';
+
     /* Try to extract from visible verification block first */
     var blockIdMatch = htmlContent.match(/VERIFICATION[\s\S]*?ID:\s*(CP-\d{8}-[a-f0-9]{12})/);
     var blockHashMatch = htmlContent.match(/VERIFICATION[\s\S]*?Hash:\s*([a-f0-9]{64})/);
@@ -960,22 +1206,34 @@ section {
     var embeddedHash = (hashMatch && hashMatch[1]) || (blockHashMatch && blockHashMatch[1]);
 
     if (!embeddedId || !embeddedHash) {
-      showFailed(uploadResult, 'This does not appear to be a valid CodeProof report. No verification data found.');
+      showFailed(uploadResult, 'This does not appear to be a valid CodeProof report or replay. No verification data found.');
       return;
     }
 
     /* Strip verification markers to recover the original base HTML */
     var stripped = htmlContent;
 
-    /* Remove verification meta block */
+    /* Remove verification meta block (report format) */
     stripped = stripped.replace(
       /\n<!-- CODEPROOF-VERIFICATION-META-START -->\n<meta name="codeproof-verification" content="[^"]*">\n<meta name="codeproof-hash" content="[^"]*">\n<!-- CODEPROOF-VERIFICATION-META-END -->/,
       ''
     );
 
-    /* Remove verification badge block */
+    /* Remove verification meta block (replay format - includes type meta tag) */
+    stripped = stripped.replace(
+      /\n<!-- CODEPROOF-VERIFICATION-META-START -->\n<meta name="codeproof-verification" content="[^"]*">\n<meta name="codeproof-hash" content="[^"]*">\n<meta name="codeproof-type" content="[^"]*">\n<!-- CODEPROOF-VERIFICATION-META-END -->/,
+      ''
+    );
+
+    /* Remove verification badge block (report format) */
     stripped = stripped.replace(
       /\n    <!-- CODEPROOF-VERIFICATION-BADGE-START -->\n    <div class="verification-id">[^<]*<\/div>\n    <!-- CODEPROOF-VERIFICATION-BADGE-END -->/,
+      ''
+    );
+
+    /* Remove verification badge block (replay format) */
+    stripped = stripped.replace(
+      /\n    <!-- CODEPROOF-VERIFICATION-BADGE-START -->\n    <div class="footer-verification-id">[^<]*<\/div>\n    <!-- CODEPROOF-VERIFICATION-BADGE-END -->/,
       ''
     );
 
@@ -995,9 +1253,13 @@ section {
     }).join('');
 
     if (recomputedHash === embeddedHash) {
-      showVerified(uploadResult, htmlContent, embeddedId, recomputedHash);
+      if (isReplay) {
+        showReplayVerified(uploadResult, htmlContent, embeddedId, recomputedHash);
+      } else {
+        showVerified(uploadResult, htmlContent, embeddedId, recomputedHash);
+      }
     } else {
-      showFailed(uploadResult, 'Hash mismatch — this report has been altered after generation or is not a valid CodeProof report.');
+      showFailed(uploadResult, 'Hash mismatch - this file has been altered after generation or is not a valid CodeProof report/replay.');
     }
   }
 
@@ -1101,6 +1363,79 @@ section {
   }
 
   /**
+   * Displays the verified card for a replay file with extracted metadata.
+   * @param {HTMLElement} container - Result container
+   * @param {string} html - The replay HTML
+   * @param {string} verificationId - The embedded verification ID
+   * @param {string} hash - The recomputed hash
+   */
+  function showReplayVerified(container, html, verificationId, hash) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+
+    /* Extract info from replay header meta chips */
+    var chipEls = doc.querySelectorAll('.meta-chip');
+    var studentName = 'Unknown';
+    var replayDate = 'Unknown';
+    var duration = 'Unknown';
+    for (var i = 0; i < chipEls.length; i++) {
+      var labelEl = chipEls[i].querySelector('.meta-label');
+      if (labelEl) {
+        var label = labelEl.textContent.trim().toLowerCase();
+        var value = chipEls[i].textContent.replace(labelEl.textContent, '').trim();
+        if (label === 'student') studentName = value;
+        if (label === 'date') replayDate = value;
+        if (label === 'duration') duration = value;
+      }
+    }
+
+    /* Extract assignment name from header title */
+    var titleEl = doc.querySelector('.header-title');
+    var assignmentName = 'Unknown';
+    if (titleEl) {
+      var titleText = titleEl.textContent || '';
+      var dashIndex = titleText.indexOf('\u2014');
+      if (dashIndex === -1) dashIndex = titleText.indexOf('-');
+      if (dashIndex > 0) {
+        assignmentName = titleText.substring(dashIndex + 1).trim();
+      } else {
+        assignmentName = titleText.replace('Development Replay', '').replace('-', '').trim() || 'Unknown';
+      }
+    }
+
+    /* Count files from file selector */
+    var optionEls = doc.querySelectorAll('.file-select option');
+    var fileCount = optionEls.length || 'N/A';
+
+    container.innerHTML =
+      '<div class="result-card verified">' +
+        '<div class="result-header">' +
+          '<div class="result-icon">&#10003;</div>' +
+          '<div class="result-title">Replay Verified</div>' +
+        '</div>' +
+        '<div class="result-body">' +
+          '<p>This development replay has not been modified since generation. The embedded data is authentic.</p>' +
+          '<div class="result-details">' +
+            detail('Type', 'Development Replay') +
+            detail('Student', escapeHTML(studentName)) +
+            detail('Assignment', escapeHTML(assignmentName)) +
+            detail('Date', escapeHTML(replayDate)) +
+            detail('Duration', escapeHTML(duration)) +
+            detail('Files', String(fileCount)) +
+            '<div class="detail-item" style="grid-column: 1 / -1;">' +
+              '<div class="detail-label">Verification ID</div>' +
+              '<div class="detail-value mono">' + escapeHTML(verificationId) + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="try-again" onclick="resetUpload()">&#8592; Verify another file</button>' +
+      '</div>';
+
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /**
    * Displays a failure card.
    * @param {HTMLElement} container - Result container
    * @param {string} message - Failure reason
@@ -1179,7 +1514,7 @@ section {
             detail('Hash Prefix', hashPrefix) +
             '<div class="detail-item">' +
               '<div class="detail-label">Status</div>' +
-              '<div class="detail-value">Format valid &mdash; upload report for full check</div>' +
+              '<div class="detail-value">Format valid - upload report for full check</div>' +
             '</div>' +
           '</div>' +
         '</div>' +

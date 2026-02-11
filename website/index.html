@@ -172,60 +172,146 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.feedback-buttons {
+.feedback-box {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.feedback-tabs {
   display: flex;
-  gap: 1.25rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  border-bottom: 2px solid var(--border);
+}
+
+.feedback-tab {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.feedback-tab:hover {
+  color: var(--accent);
+  background: rgba(67, 97, 238, 0.03);
+}
+
+.feedback-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.feedback-tab-content {
+  display: none;
+  padding: 2rem;
+}
+
+.feedback-tab-content.active {
+  display: block;
+}
+
+.form-group {
   margin-bottom: 1.25rem;
 }
 
-.btn-feedback {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 2rem;
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #b2bec3;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
   border-radius: 10px;
   font-family: var(--font);
   font-size: 0.95rem;
   font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
   color: #fff;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.btn-feedback:hover {
+.btn-submit:hover {
   transform: translateY(-2px);
 }
 
-.btn-feature {
+.btn-submit-feature {
   background: var(--accent);
   box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
 }
 
-.btn-feature:hover {
+.btn-submit-feature:hover {
   background: var(--accent-light);
   box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4);
 }
 
-.btn-bug {
+.btn-submit-bug {
   background: var(--danger);
   box-shadow: 0 4px 16px rgba(231, 29, 54, 0.3);
 }
 
-.btn-bug:hover {
+.btn-submit-bug:hover {
   background: #ff2e48;
   box-shadow: 0 6px 24px rgba(231, 29, 54, 0.4);
 }
 
-.btn-feedback-icon {
-  font-size: 1.1rem;
-}
-
 .feedback-github {
   text-align: center;
+  margin-top: 1.5rem;
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
@@ -930,6 +1016,8 @@ section {
   section { padding: 3.5rem 1.25rem; }
   .features-grid { grid-template-columns: 1fr; }
   .verify-tab-content { padding: 1.5rem; }
+  .feedback-tab-content { padding: 1.5rem; }
+  .form-row { grid-template-columns: 1fr; }
   .upload-area { padding: 2rem 1.25rem; }
   .result-details { grid-template-columns: 1fr; }
   .section-header h2 { font-size: 1.6rem; }
@@ -1222,7 +1310,7 @@ section {
     observer.observe(el);
   });
 
-  /* ── Tab switching ─────────────────────────── */
+  /* ── Tab switching (verify) ────────────────── */
   var tabs = document.querySelectorAll('.verify-tab');
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
@@ -1230,6 +1318,17 @@ section {
       tab.classList.add('active');
       document.querySelectorAll('.verify-tab-content').forEach(function (c) { c.classList.remove('active'); });
       document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── Tab switching (feedback) ────────────────── */
+  var feedbackTabs = document.querySelectorAll('.feedback-tab');
+  feedbackTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      feedbackTabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelectorAll('.feedback-tab-content').forEach(function (c) { c.classList.remove('active'); });
+      document.getElementById('tab-' + tab.dataset.feedbackTab).classList.add('active');
     });
   });
 

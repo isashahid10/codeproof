@@ -1,7 +1,7 @@
 {
   "name": "codeproof",
   "displayName": "codeproof",
-  "description": "Prove you wrote your code — continuous development recording with tamper-evident reports",
+  "description": "Prove you wrote your code \u2014 continuous development recording with tamper-evident reports",
   "icon": "icon.png",
   "version": "0.0.1",
   "engines": {
@@ -156,5 +156,11 @@
     "diff": "^8.0.3",
     "minimatch": "^10.1.2",
     "puppeteer-core": "^24.37.2"
-  }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isashahid10/codeproof.git"
+  },
+  "publisher": "isashahid10"
 }

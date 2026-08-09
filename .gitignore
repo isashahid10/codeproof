@@ -1,5 +1,23 @@
+# build output
 out
 dist
-node_modules
-.vscode-test/
 *.vsix
+
+# dependencies
+node_modules
+
+# test
+.vscode-test/
+
+# local CodeProof capture data (never commit a recording)
+.codeproof/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.swp

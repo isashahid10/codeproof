@@ -33,7 +33,7 @@ VS Code's built-in Timeline tracks local history per-file but isn't exportable, 
 | Generate HTML/PDF report | `puppeteer` or just HTML export (let browser print to PDF) | Medium |
 | Tamper-resistance (hash chaining) | SHA-256 hash of each snapshot + previous hash (like blockchain) | Easy |
 | Detect paste vs typing events | `onDidChangeTextDocument` — large single-change = paste, many small changes = typing | Medium |
-| AI-powered analysis | Call Claude/OpenAI API to summarise development story | Medium |
+| AI-powered analysis | Call Gemini/OpenAI API to summarise development story | Medium |
 | VS Code extension packaging | `yo code` scaffolding + `vsce` for publishing | Easy |
 
 ### Market Feasibility — STRONG ✅
@@ -49,7 +49,7 @@ VS Code's built-in Timeline tracks local history per-file but isn't exportable, 
 
 - Free to build (TypeScript, open source dependencies)
 - Free to publish on VS Code Marketplace
-- AI report generation is the only cost: ~$0.02-0.10 per report via Claude API
+- AI report generation is the only cost: ~$0.02-0.10 per report via Gemini API
 - Could offer a free tier (HTML report, no AI) + paid tier (AI analysis)
 
 ### Risks
@@ -91,7 +91,7 @@ VS Code's built-in Timeline tracks local history per-file but isn't exportable, 
 │              ┌──────────┐ ┌──────────┐ ┌─────┐ │
 │              │ HTML      │ │ AI       │ │ PDF │ │
 │              │ Timeline  │ │ Analysis │ │ Gen │ │
-│              │ View      │ │ (Claude) │ │     │ │
+│              │ View      │ │ (Gemini) │ │     │ │
 │              └──────────┘ └──────────┘ └─────┘ │
 │                                                  │
 │  ┌──────────────────────────────────────────┐   │
@@ -171,7 +171,7 @@ The foundation. Get this right first.
 
 This is the differentiator.
 
-- **AI development narrative** — send the snapshot timeline to Claude API and generate a human-readable story:
+- **AI development narrative** — send the snapshot timeline to Gemini API and generate a human-readable story:
   > "Development began at 2:14 PM with the creation of `bst.py`. The student started by implementing the `Node` class with `__init__`, then moved to the `BST` class. Over the next 45 minutes, the insert method was written, tested (3 iterations — the first had an off-by-one error on line 23 which was corrected at 2:32 PM), and finalised. The delete method took longer, with 7 revisions over 1.5 hours, suggesting the student was working through the logic incrementally..."
   
 - **Authenticity indicators** — AI analyses patterns and flags:
@@ -184,7 +184,7 @@ This is the differentiator.
   - Average speed, tendency to write tests first or last, refactoring habits
   - Useful for building a baseline across multiple assignments
 
-- **Configurable AI provider** — support Claude, OpenAI, or local models via Ollama
+- **Configurable AI provider** — support Gemini, OpenAI, or local models via Ollama
 
 ### Phase 4 — Smart Flags & Dual Reports (~1 week)
 
@@ -336,7 +336,7 @@ Example AI suggestions panel:
 | Hashing | Node.js `crypto` (built-in) | SHA-256, zero dependencies |
 | HTML report | Handlebars templates + Chart.js | Clean templating + nice graphs |
 | PDF generation | Puppeteer (headless Chrome) | Best HTML-to-PDF fidelity |
-| AI analysis | Anthropic SDK (`@anthropic-ai/sdk`) | Claude for narrative generation |
+| AI analysis | Google Generative AI (`@google/generative-ai`) | Gemini for narrative generation |
 | Extension scaffold | Yeoman `generator-code` | Official VS Code extension generator |
 | Packaging | `@vscode/vsce` | Official packaging/publishing tool |
 
@@ -389,7 +389,7 @@ Example AI suggestions panel:
 ### Week 3: AI Integration + Flags System
 
 **Day 11-12: AI Narrative Generation**
-- Anthropic SDK integration
+- Google Generative AI SDK integration
 - Prompt engineering for development narrative
 - Authenticity indicators (flag pastes, assess progression)
 - Settings for API key, model selection, AI on/off
@@ -425,7 +425,7 @@ Example AI suggestions panel:
 |---|---|
 | Development | Your time (4 weeks part-time) |
 | VS Code Marketplace publishing | Free (one-time Microsoft account) |
-| AI report generation (Claude API) | ~$0.02-0.10 per report |
+| AI report generation (Gemini API) | ~$0.02-0.10 per report |
 | Hosting (if cloud witness feature) | ~$5/month for a tiny server |
 
 ---

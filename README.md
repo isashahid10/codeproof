@@ -4,6 +4,10 @@
 
 Everything stays on your machine. There is no account, no server, and no upload.
 
+[**Install from Open VSX**](https://open-vsx.org/extension/isashahid/codeproof) · [Website](https://codeproof.netlify.app)
+
+![CodeProof](docs/landing.jpg)
+
 ---
 
 ## The problem
@@ -35,7 +39,9 @@ The event log lives in a local SQLite database inside your workspace.
 
 ## Install
 
-Not on the VS Code Marketplace yet. To run from source:
+**[Install from Open VSX](https://open-vsx.org/extension/isashahid/codeproof)**, or search "CodeProof" in any editor that uses the Open VSX registry (VSCodium, Cursor, Gitpod, Theia). A `.vsix` is also attached to the site.
+
+To run from source instead:
 
 ```bash
 git clone https://github.com/isashahid10/codeproof.git
